@@ -2,11 +2,13 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/disintegration/imaging"
 	"image"
 	"image/color"
 	"path/filepath"
 	"strings"
+	"sync"
 )
 
 func createOutputPath(inputPath string) string {
@@ -28,6 +30,7 @@ func calcNewSize(src image.Image, percent int) int {
 }
 
 func processFile(inputPath string, outputPath string, percent int) (err error) {
+	fmt.Printf("\nprocessing %s", inputPath)
 	// Opening src file
 	src, err := imaging.Open(inputPath)
 	if err != nil {
@@ -42,7 +45,10 @@ func processFile(inputPath string, outputPath string, percent int) (err error) {
 	dst := imaging.PasteCenter(white, src)
 
 	// Saving result
+	fmt.Printf("\nsaving %s", inputPath)
 	err = imaging.Save(dst, outputPath)
+	fmt.Printf("\nsaved %s", inputPath)
+
 	if err != nil {
 		return err
 	}
@@ -65,14 +71,23 @@ func main() {
 		panic("incorrect percent")
 	}
 
+	wg := sync.WaitGroup{}
+	wg.Add(len(inputArgs))
 	for _, inputPath := range inputArgs {
 		currentOutputPath := createOutputPath(inputPath)
 		if *outputPath != "" {
 			currentOutputPath = *outputPath
 		}
-		err := processFile(inputPath, currentOutputPath, *percent)
-		if err != nil {
-			panic(err)
-		}
+		inputPath := inputPath
+		go func() {
+			defer wg.Done()
+			err := processFile(inputPath, currentOutputPath, *percent)
+			if err != nil {
+				panic(err)
+			}
+		}()
+
 	}
+	wg.Wait()
+	return
 }
