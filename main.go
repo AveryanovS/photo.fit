@@ -5,6 +5,7 @@ import (
 	"github.com/disintegration/imaging"
 	"image/color"
 	"log"
+	"strings"
 )
 
 func main() {
@@ -14,8 +15,14 @@ func main() {
 	var percent = 0
 	flag.IntVar(&percent, "p", 10, "Spaces length in percent from biggest dimension")
 	var outputPath = ""
-	flag.StringVar(&outputPath, "o", "output.png", "Path to save result")
+	flag.StringVar(&outputPath, "o", "", "Path to save result")
 	flag.Parse()
+	if outputPath == "" {
+		pathSlice := strings.Split(inputPath, ".")
+		ext := pathSlice[len(pathSlice)-1]
+		newPathSlice := append(pathSlice[:len(pathSlice)-1], "_processed.", ext)
+		outputPath = strings.Join(newPathSlice, "")
+	}
 
 	if percent < 1 || percent > 100 {
 		log.Fatalf("incorrect percent")
