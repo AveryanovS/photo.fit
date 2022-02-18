@@ -74,11 +74,11 @@ func main() {
 	wg := sync.WaitGroup{}
 	wg.Add(len(inputArgs))
 	for _, inputPath := range inputArgs {
+		inputPath := inputPath
 		currentOutputPath := createOutputPath(inputPath)
 		if *outputPath != "" {
 			currentOutputPath = *outputPath
 		}
-		inputPath := inputPath
 		go func() {
 			defer wg.Done()
 			err := processFile(inputPath, currentOutputPath, *percent)
