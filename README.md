@@ -2,10 +2,9 @@ Simple tool. Fits any photo to white background square with N% spaces on biggest
 ### Install
 `go build`
 ### Usage
-`<path to binary> -i ./input.png -o output.png -p 10`
-- `-i` - path to source image
-- `-o` - path to save result image
-- `-p` - percent of white spaces
+`photofit <input files, separated by space>`
+- `-o` - path to save result image, allowed for 1 input file only
+- `-p` - percentage of white spaces
 
 Also, possible to call from context menu via special [Shortcut](https://www.icloud.com/shortcuts/7303ea6709c240be9933c6a99d666fe6) on Mac OS
 (change path to your binary)
